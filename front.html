@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRecruit - AI Recruitment Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #4F46E5, #7C3AED);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #EEF2FF, #F5F3FF);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease-in-out;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            width: 300px;
+        }
+
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+
+        button {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <nav class="fixed w-full bg-white shadow-sm z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-bold gradient-text">AIRecruit</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-indigo-600">Features</a>
+                    <a href="#upload" class="text-gray-600 hover:text-indigo-600">Upload</a>
+                    <a href="#contact" class="text-gray-600 hover:text-indigo-600">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-bg pt-32 pb-20 text-center">
+        <div class="container mx-auto px-4">
+            <h1 class="text-5xl md:text-6xl font-bold gradient-text">
+                Transform Hiring with AI
+            </h1>
+            <p class="text-xl text-gray-600 my-6">
+                Revolutionize your recruitment process with AI-powered tools.
+            </p>
+            <button onclick="showUploadModal()" class="bg-indigo-600 text-white px-8 py-4 rounded-lg text-lg hover:bg-indigo-700">
+                Upload Resume
+            </button>
+        </div>
+    </section>
+
+    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center w-96">
+            <h2 class="text-2xl font-bold gradient-text mb-4">Upload Your Resume</h2>
+            <input type="file" id="resumeInput" accept=".pdf, .docx, .txt" class="border border-gray-300 rounded-lg p-3 w-full">
+
+            <button onclick="handleUpload()" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                Upload
+            </button>
+            <button onclick="closeUploadModal()" class="mt-2 text-gray-500 hover:text-gray-700">Cancel</button>
+            <p id="uploadSuccess" class="text-green-600 font-semibold mt-3 hidden">✅ Successfully uploaded!</p>
+        </div>
+    </div>
+
+    <section id="features" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12 gradient-text">Powerful Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="text-xl font-bold mb-2">AI Resume Analysis</h3>
+                    <p class="text-gray-600">Automated parsing and matching for accurate screening.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="text-xl font-bold mb-2">Smart Matching</h3>
+                    <p class="text-gray-600">Intelligent recommendations for job-candidate fit.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="text-xl font-bold mb-2">Automated Hiring</h3>
+                    <p class="text-gray-600">Reduce hiring time with AI-driven automation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12 gradient-text">Contact Us</h2>
+            <form id="contactForm" class="max-w-xl mx-auto">
+                <input type="text" id="name" placeholder="Name" class="w-full p-3 border rounded-lg mb-4">
+                <input type="email" id="email" placeholder="Email" class="w-full p-3 border rounded-lg mb-4">
+                <textarea id="message" placeholder="Message" class="w-full p-3 border rounded-lg mb-4"></textarea>
+                <button type="button" onclick="handleContact()" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">
+                    Send Message
+                </button>
+                <p id="contactSuccess" class="text-green-600 font-semibold mt-3 hidden">✅ Sent successfully!</p>
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-8 text-center">
+        <p>© 2025 AIRecruit. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function showUploadModal() {
+            document.getElementById("uploadModal").classList.remove("hidden");
+        }
+
+        function closeUploadModal() {
+            document.getElementById("uploadModal").classList.add("hidden");
+        }
+
+        function handleUpload() {
+            const fileInput = document.getElementById("resumeInput").files[0];
+            if (fileInput) {
+                let formData = new FormData();
+                formData.append("resume", fileInput);
+
+                fetch('/upload_resume', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        document.getElementById("uploadSuccess").classList.remove("hidden");
+                    } else {
+                        alert("Something went wrong during the upload.");
+                    }
+                })
+                .catch(error => {
+                    alert("Error uploading file. Please try again.");
+                    console.error('Error:', error);
+                });
+            } else {
+                alert("Please select a file before uploading.");
+            }
+        }
+
+        function handleContact() {
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let message = document.getElementById("message").value;
+
+            if (name && email && message) {
+                document.getElementById("contactSuccess").classList.remove("hidden");
+            } else {
+                alert("Please fill out all fields before sending.");
+            }
+        }
+    </script>
+
+</body>
+</html>
